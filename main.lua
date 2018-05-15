@@ -1,5 +1,7 @@
 --[[
 
+    
+
     First commit (the boilerplate code and assets) copied from cs50 Game design course by Harvard:
     https://cs50.github.io/games/lectures
 
@@ -44,6 +46,10 @@ function love.load()
         ['arrows'] = love.graphics.newImage('graphics/arrows.png'),
         ['hearts'] = love.graphics.newImage('graphics/hearts.png'),
         ['particle'] = love.graphics.newImage('graphics/particle.png')
+    }
+
+    gFrames = {
+        ['paddles'] = GenerateQuadsPaddles(gTextures['main'])
     }
     
     -- initialize our virtual resolution, which will be rendered within our

@@ -1,4 +1,7 @@
-
+--[[
+    LIST OF BRANDON SHERMANS UPDATES
+    - table.size function
+]]
 --[[
     GD50
     Breakout Remake
@@ -82,4 +85,10 @@ function GenerateQuadsPaddles(atlas)
     end
 
     return quads
+end
+
+function table.size(tbl)
+    local count = 0
+    for _ in pairs(tbl) do count = count + 1 end
+    return count
 end
