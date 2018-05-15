@@ -49,9 +49,10 @@ function love.load()
     }
 
     gFrames = {
-        ['paddles'] = GenerateQuadsPaddles(gTextures['main']),
-        ['balls'] = GenerateQuadsBalls(gTextures['main']),
-        ['bricks'] = GenerateQuadsBricks(gTextures['main'])
+        ['paddles'] = generateQuadsPaddles(gTextures['main']),
+        ['balls'] = generateQuadsBalls(gTextures['main']),
+        ['bricks'] = generateQuadsBricks(gTextures['main']),
+        ['hearts'] = generateQuads(gTextures['hearts'], 10, 9)
     }
 
     
@@ -82,7 +83,9 @@ function love.load()
     -- 6. 'game-over' (the player has lost; display score and allow restart)
     gStateMachine = StateMachine {
         ['start'] = function() return StartState() end,
-        ['play'] = function() return PlayState() end
+        ['play'] = function() return PlayState() end,
+        ['serve'] = function() return ServeState() end,
+        ['gameover'] = function() return GameOverState() end
     }
     gStateMachine:change('start')
 
@@ -178,8 +181,46 @@ end
     Renders the current FPS.
 ]]
 function displayFPS()
+
+    
     -- simple FPS display across all states
     love.graphics.setFont(gFonts['small'])
     love.graphics.setColor(0, 255, 0, 255)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
+end
+
+function renderHealth(health)
+    -- start of our health rendering
+    local healthX = VIRTUAL_WIDTH - 100
+    
+    -- render health left
+    for i = 1, health do
+        love.graphics.draw(gTextures['hearts'], gFrames['hearts'][1], healthX, 4)
+        healthX = healthX + 11
+    end
+
+    -- render missing health
+    for i = 1, 3 - health do
+        love.graphics.draw(gTextures['hearts'], gFrames['hearts'][2], healthX, 4)
+        healthX = healthX + 11
+    end
+end
+--[[
+function renderHealth(health)
+
+    for i = 1, 3 do
+        love.graphics.draw(gTextures['hearts'], gFrames['hearts'][2], healthX, 4)
+        if i < = health then
+            love.graphics.draw(gTextures['hearts'], gFrames['hearts'][1], healthX, 4)
+        end
+        healthX = healthX = 11
+    end
+
+end
+]]--
+
+function renderScore(score)
+    love.graphics.setFont(gFonts['small'])
+    love.graphics.print('Score:', VIRTUAL_WIDTH - 60, 5)
+    love.graphics.printf(tostring(score), VIRTUAL_WIDTH - 50, 5, 40, 'right')
 end

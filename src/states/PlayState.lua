@@ -1,28 +1,31 @@
 PlayState = Class{__includes = BaseState}
 
-function PlayState:init()
+function PlayState:enter(par)
 
     self.gameObjects = {
-        ['paddle'] = Paddle(),
-        ['ball'] = Ball(1),
+        ['paddle'] = par.paddle,
+        ['ball'] = par.ball
     }
-    for _, brick in pairs(LevelMaker.createLevel(1)) do
+
+    self.score = par.score
+    self.health = 1
+    self.bricks = par.bricks
+
+    for _, brick in pairs(par.bricks) do
         table.insert(self.gameObjects, brick)
     end
 
     self.gameObjects['ball'].dx = math.random(-200, 200)
     self.gameObjects['ball'].dy = math.random(-50, -60)
-    self.gameObjects['ball'].x = VIRTUAL_WIDTH / 2 - 4
-    self.gameObjects['ball'].y = VIRTUAL_HEIGHT - 42
     
     self.paused = false
 end
 
 function PlayState:update(dt)
-    
+    local ball = self.gameObjects['ball']
     if love.keyboard.wasPressed('p') then
         self.paused = not self.paused
-        gEventHandler('pause')
+        gEventHandler:alert('pause')
     end
 
     if love.keyboard.wasPressed('escape') then
@@ -33,13 +36,32 @@ function PlayState:update(dt)
         for name, obj in pairs(self.gameObjects) do
             obj:update(dt) 
         end
-        local ball = self.gameObjects['ball']
+        
         for name, obj in pairs(self.gameObjects) do
             if name ~= 'ball' then
                 if ball:collidesWith(obj) then
                     ball:hit(obj)
                     obj:hit(ball)
+                    break
                 end
+            end
+        end
+
+        if ball.y > VIRTUAL_HEIGHT then
+            self.health = self.health - 1
+            gEventHandler:alert('hurt')
+
+            if self.health == 0 then
+                gStateMachine:change('gameover', {
+                    score = self.score
+                })
+            else
+                gStateMachine:change('serve', {
+                    paddle = self.gameObjects.paddle,
+                    bricks = self.bricks,
+                    health = self.health,
+                    score = self.score
+                })
             end
         end
     end
@@ -49,5 +71,10 @@ end
 function PlayState:render()
     for name, obj in pairs(self.gameObjects) do
        obj:render(dt) 
+    end
+
+    if self.paused then
+        love.graphics.setFont(gFonts['large'])
+        love.graphics.printf("PAUSED", 0, VIRTUAL_HEIGHT / 2 - 16, VIRTUAL_WIDTH, 'center')
     end
 end

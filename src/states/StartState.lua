@@ -39,10 +39,15 @@ function StartState:update(dt)
     end
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gEventHandler:alert('confirm')
-
+        --gEventHandler:alert('confirm')
+        
         if self.menuOptions[self.highlighted] == "START" then
-            gStateMachine:change('play')
+            gStateMachine:change('serve', {
+                score = 0,
+                paddle = Paddle(1),
+                bricks = LevelMaker.createLevel(1),
+                health = 3
+            })
         end
     end
 

@@ -16,7 +16,7 @@
     width and a height for the tiles therein, split the texture into
     all of the quads by simply dividing it evenly.
 ]]
-function GenerateQuads(atlas, tilewidth, tileheight)
+function generateQuads(atlas, tilewidth, tileheight)
     local sheetWidth = atlas:getWidth() / tilewidth
     local sheetHeight = atlas:getHeight() / tileheight
 
@@ -54,7 +54,7 @@ end
     sprite sheet. For this, we have to piece out the paddles a little more
     manually, since they are all different sizes.
 ]]
-function GenerateQuadsPaddles(atlas)
+function generateQuadsPaddles(atlas)
     local x = 0
     local y = 64
 
@@ -87,7 +87,7 @@ function GenerateQuadsPaddles(atlas)
     return quads
 end
 
-function GenerateQuadsBalls(atlas)
+function generateQuadsBalls(atlas)
     local x = 96
     local y = 48
 
@@ -121,8 +121,8 @@ function GenerateQuadsBalls(atlas)
     return quads
 end
 
-function GenerateQuadsBricks(atlas)
-    return table.slice(GenerateQuads(atlas, 32, 16), 1, 16)
+function generateQuadsBricks(atlas)
+    return table.slice(generateQuads(atlas, 32, 16), 1, 16)
 end
 
 

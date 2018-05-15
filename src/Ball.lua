@@ -35,6 +35,8 @@ function Ball:update(dt)
         self.dy = -1 * self.dy
         gEventHandler:alert('wall-hit')
     end
+
+    
 end
 
 function Ball:render()
@@ -59,6 +61,7 @@ function Ball:collidesWith(rect)
 end
 
 function Ball:hit(obj)
+    
     if obj.type == 'paddle' then
         self.dy = -1 * self.dy
 
@@ -92,4 +95,5 @@ function Ball:hit(obj)
             end
         end
     end
+    --self.dy = self.dy * 1.02
 end
