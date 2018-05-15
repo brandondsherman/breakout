@@ -49,8 +49,11 @@ function love.load()
     }
 
     gFrames = {
-        ['paddles'] = GenerateQuadsPaddles(gTextures['main'])
+        ['paddles'] = GenerateQuadsPaddles(gTextures['main']),
+        ['balls'] = GenerateQuadsBalls(gTextures['main']),
+        ['bricks'] = GenerateQuadsBricks(gTextures['main'])
     }
+
     
     -- initialize our virtual resolution, which will be rendered within our
     -- actual window no matter its dimensions
@@ -60,25 +63,11 @@ function love.load()
         resizable = true
     })
 
+
+    gEventHandler = EventHandler()
     -- set up our sound effects; later, we can just index this table and
     -- call each entry's `play` method
-    gSounds = {
-        ['paddle-hit'] = love.audio.newSource('sounds/paddle_hit.wav'),
-        ['score'] = love.audio.newSource('sounds/score.wav'),
-        ['wall-hit'] = love.audio.newSource('sounds/wall_hit.wav'),
-        ['confirm'] = love.audio.newSource('sounds/confirm.wav'),
-        ['select'] = love.audio.newSource('sounds/select.wav'),
-        ['no-select'] = love.audio.newSource('sounds/no-select.wav'),
-        ['brick-hit-1'] = love.audio.newSource('sounds/brick-hit-1.wav'),
-        ['brick-hit-2'] = love.audio.newSource('sounds/brick-hit-2.wav'),
-        ['hurt'] = love.audio.newSource('sounds/hurt.wav'),
-        ['victory'] = love.audio.newSource('sounds/victory.wav'),
-        ['recover'] = love.audio.newSource('sounds/recover.wav'),
-        ['high-score'] = love.audio.newSource('sounds/high_score.wav'),
-        ['pause'] = love.audio.newSource('sounds/pause.wav'),
-
-        ['music'] = love.audio.newSource('sounds/music.wav')
-    }
+    gSoundEngine = SoundEngine()
 
     -- the state machine we'll be using to transition between various states
     -- in our game instead of clumping them together in our update and draw
@@ -92,9 +81,12 @@ function love.load()
     -- 5. 'victory' (the current level is over, with a victory jingle)
     -- 6. 'game-over' (the player has lost; display score and allow restart)
     gStateMachine = StateMachine {
-        ['start'] = function() return StartState() end
+        ['start'] = function() return StartState() end,
+        ['play'] = function() return PlayState() end
     }
     gStateMachine:change('start')
+
+    
 
     -- a table we'll use to keep track of which keys have been pressed this
     -- frame, to get around the fact that LÖVE's default callback won't let us

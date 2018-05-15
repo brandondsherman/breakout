@@ -2,6 +2,7 @@ Paddle = Class{}
 
 
 function Paddle:init()
+    self.type = 'paddle'
     self.x = VIRTUAL_WIDTH / 2 - 32
     self.y = VIRTUAL_HEIGHT - 32
 
@@ -12,22 +13,20 @@ function Paddle:init()
 
     self.skin = 1
     self.size = 2
+
+    self.paddleSpeed = 200
 end
 
-function paddle:update(dt)
+function Paddle:update(dt)
     if love.keyboard.isDown('left') then
-        self.dx = -PADDLE_SPEED
+        self.dx = -1 * self.paddleSpeed
     elseif love.keyboard.isDown('right') then
-        self.dx = PADDLE_SPEED
+        self.dx = self.paddleSpeed
     else
         self.dx = 0
     end
 
-    if self.dx < 0 then
-        self.x = math.max(0, self.x + self.dx * dt)
-    else
-        self.x = math.min(VIRTUAL_WIDTH - self.width, self.x + self.dx * dt)
-    end
+    self.x = math.max(0, math.min(VIRTUAL_WIDTH - self.width, self.x + self.dx * dt))
 end
 
 function Paddle:render()
@@ -36,4 +35,8 @@ function Paddle:render()
         gFrames['paddles'][self.size + 4 * (self.skin -1)],
         self.x, self. y
     )
+end
+
+function Paddle:hit(obj)
+    gEventHandler:alert('paddle-hit')
 end

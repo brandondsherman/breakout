@@ -17,28 +17,31 @@
 -- even if we don't override them ourselves; handy to avoid superfluous code!
 StartState = Class{__includes = BaseState}
 
--- whether we're highlighting "Start" or "High Scores"
-local highlighted = 0
-local menuOptions = {
-    [0] = 'START',
-    [1] = 'HIGH SCORES'
-}
-local menuOptionsSize = table.size(menuOptions)
+
+
+function StartState:init()
+    self.highlighted = 0
+    self.menuOptions = {
+        [0] = 'START',
+        [1] = 'HIGH SCORES'
+    }
+    self.menuOptionsSize = table.size(self.menuOptions)
+end
 
 function StartState:update(dt)
-    -- toggle highlighted option if we press an arrow key up or down
+    -- toggle self.highlighted option if we press an arrow key up or down
     if love.keyboard.wasPressed('up') then
-        highlighted = (highlighted - 1) % menuOptionsSize
-        gSounds['paddle-hit']:play()
+        self.highlighted = (self.highlighted - 1) % self.menuOptionsSize
+        gEventHandler:alert('select')
     elseif love.keyboard.wasPressed('down') then
-        highlighted = (highlighted + 1) % menuOptionsSize
-        gSounds['paddle-hit']:play()
+        self.highlighted = (self.highlighted + 1) % self.menuOptionsSize
+        gEventHandler:alert('select')
     end
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gSounds['confirm']:play()
+        gEventHandler:alert('confirm')
 
-        if menuOptions[highlighted] == "START" then
+        if self.menuOptions[self.highlighted] == "START" then
             gStateMachine:change('play')
         end
     end
@@ -58,9 +61,9 @@ function StartState:render()
     -- instructions
     love.graphics.setFont(gFonts['medium'])
 
-    local startingY = VIRTUAL_HEIGHT / 2 + 110 - (20 * menuOptionsSize)
-    for i, str in pairs(menuOptions) do
-        if highlighted == i then
+    local startingY = VIRTUAL_HEIGHT / 2 + 110 - (20 * self.menuOptionsSize)
+    for i, str in pairs(self.menuOptions) do
+        if self.highlighted == i then
             love.graphics.setColor(103, 255, 255, 255)
         end
         love.graphics.printf(str, 0, startingY + (20 * i), VIRTUAL_WIDTH, 'center')

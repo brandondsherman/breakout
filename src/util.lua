@@ -87,8 +87,55 @@ function GenerateQuadsPaddles(atlas)
     return quads
 end
 
+function GenerateQuadsBalls(atlas)
+    local x = 96
+    local y = 48
+
+    local counter = 1
+    local quads = {}
+
+    for i = 0, 3 do
+        quads[counter] = 
+            love.graphics.newQuad(
+                x, y,
+                8, 8, 
+                atlas:getDimensions()
+            )
+        x = x + 8
+        counter = counter + 1
+    end
+
+    x = 96
+    y = 56
+
+    for i = 0, 2 do
+        quads[counter] = 
+            love.graphics.newQuad(
+                x, y,
+                8, 8,
+                atlas:getDimensions()
+            )
+        x = x + 8
+        counter = counter + 1
+    end
+    return quads
+end
+
+function GenerateQuadsBricks(atlas)
+    return table.slice(GenerateQuads(atlas, 32, 16), 1, 16)
+end
+
+
 function table.size(tbl)
     local count = 0
     for _ in pairs(tbl) do count = count + 1 end
     return count
 end
+
+function math.sign(x)
+    if x == 0 then
+        return 0
+    end
+    return math.abs(x) / x
+end
+
