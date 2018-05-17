@@ -8,7 +8,7 @@ function PlayState:enter(par)
     }
 
     self.score = par.score
-    self.health = 1
+    self.health = par.health
     self.bricks = par.bricks
 
     for _, brick in pairs(par.bricks) do
@@ -42,6 +42,9 @@ function PlayState:update(dt)
                 if ball:collidesWith(obj) then
                     ball:hit(obj)
                     obj:hit(ball)
+                    if obj.type == 'brick' then
+                        self.score = self.score + (obj.tier * 200 + obj.color * 25)
+                    end
                     break
                 end
             end
@@ -72,6 +75,9 @@ function PlayState:render()
     for name, obj in pairs(self.gameObjects) do
        obj:render(dt) 
     end
+
+    renderScore(self.score)
+    renderHealth(self.health)
 
     if self.paused then
         love.graphics.setFont(gFonts['large'])

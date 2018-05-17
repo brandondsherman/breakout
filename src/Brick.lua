@@ -30,10 +30,23 @@ end
 
 function Brick:hit(obj)
     if self.inPlay then
-        gEventHandler:alert('brick-hit-1')    
+        gEventHandler:alert('brick-hit-2')
+        if self.tier > 0 then
+            if self.color == 1 then
+                self.tier = self.tier - 1
+                self.color = 5
+            else
+                self.color = self.color - 1
+            end
+        else
+            if self.color == 1 then
+                self.inPlay = false
+                gEventHandler:alert('brick-hit-1')
+            else 
+                self.color = self.color - 1
+            end
+        end
     end
-    
-    self.inPlay = false
 
 end
 

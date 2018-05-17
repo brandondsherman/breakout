@@ -82,16 +82,16 @@ function Ball:hit(obj)
 
             if self.x + 2 < obj.x and self.dx > 0 then
                 self.dx = -1 * self.dx
-                self.x = obj.x - 8
+                self.x = obj.x - self.width
             elseif self.x + 6 > obj.x + obj.width and self.dx < 0 then
                 self.dx = -1 * self.dx
-                self.x = obj.x + 32
+                self.x = obj.x + obj.width
             elseif self.y < obj.y then
                 self.dy = -1 * self.dy
-                self.y = obj.y - 8
+                self.y = obj.y - self.height
             else 
                 self.dy = -1 * self.dy
-                self.y = obj.y + 16
+                self.y = obj.y + obj.height
             end
         end
     end
