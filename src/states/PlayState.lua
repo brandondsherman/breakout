@@ -16,7 +16,7 @@ function PlayState:enter(par)
     end
 
     self.gameObjects['ball'].dx = math.random(-200, 200)
-    self.gameObjects['ball'].dy = math.random(-50, -60)
+    self.gameObjects['ball'].dy = math.random(-120, -80)
     
     self.paused = false
 end
