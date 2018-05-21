@@ -4,10 +4,11 @@ function ServeState:enter(par)
     
     self.bricks = par.bricks
     self.health = par.health
-    self.score = par.score
+    
     self.paddle = par.paddle
     self.ball = Ball()
     self.ball.color = math.random(7)    
+    self.level = par.level
 end
 
 function ServeState:update(dt)
@@ -20,8 +21,8 @@ function ServeState:update(dt)
             paddle = self.paddle,
             bricks = self.bricks,
             health = self.health,
-            score = self.score,
-            ball = self.ball
+            ball = self.ball,
+            level = self.level,
         })
     end
 
@@ -40,7 +41,7 @@ function ServeState:render()
         brick:render()
     end
 
-    renderScore(self.score)
+    renderScore(score)
     renderHealth(self.health)
 
     love.graphics.setFont(gFonts['medium'])

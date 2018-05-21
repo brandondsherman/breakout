@@ -43,10 +43,10 @@ function StartState:update(dt)
         
         if self.menuOptions[self.highlighted] == "START" then
             gStateMachine:change('serve', {
-                score = 0,
                 paddle = Paddle(1),
                 bricks = LevelMaker.createLevel(1),
-                health = 3
+                health = 3,
+                level = 1,
             })
         end
     end

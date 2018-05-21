@@ -2,78 +2,105 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(par)
 
-    self.gameObjects = {
-        ['paddle'] = par.paddle,
-        ['ball'] = par.ball
-    }
-
-    self.score = par.score
-    self.health = par.health
+    self.paddle = par.paddle
+    self.ball = par.ball
     self.bricks = par.bricks
 
-    for _, brick in pairs(par.bricks) do
-        table.insert(self.gameObjects, brick)
-    end
+    
+    self.health = par.health
+    self.bricks = par.bricks
+    self.level = par.level
 
-    self.gameObjects['ball'].dx = math.random(-200, 200)
-    self.gameObjects['ball'].dy = math.random(-120, -80)
+    self.ball.dx = math.random(-200,200)
+    self.ball.dy = math.random(-120, -80)
     
     self.paused = false
 end
 
 function PlayState:update(dt)
-    local ball = self.gameObjects['ball']
     if love.keyboard.wasPressed('p') then
         self.paused = not self.paused
         gEventHandler:alert('pause')
-    end
+    end --
 
     if love.keyboard.wasPressed('escape') then
         love.event.quit()
-    end
+    end -- 
 
     if not self.paused then
-        for name, obj in pairs(self.gameObjects) do
-            obj:update(dt) 
-        end
-        
-        for name, obj in pairs(self.gameObjects) do
-            if name ~= 'ball' then
-                if ball:collidesWith(obj) then
-                    ball:hit(obj)
-                    obj:hit(ball)
-                    if obj.type == 'brick' then
-                        self.score = self.score + (obj.tier * 200 + obj.color * 25)
-                    end
-                    break
-                end
+        self.paddle:update(dt)
+        local collision = self.ball:update(dt, self.bricks)
+        if collision then
+            if self:checkVictory() then
+                gStateMachine:change('victory', {
+                    level = self.level,
+                    paddle = self.paddle,
+                    health = self.health,
+                    ball = self.ball
+                })
+            end --
+        end --
+
+        local paddleHit = false
+        --top
+        if self.ball.x + self.ball.width > self.paddle.x and self.ball.x < self.paddle.x + self.paddle.width then --good
+            if self.ball.y + self.ball.height > self.paddle.y and self.ball.y < self.paddle.y then 
+                paddleHit = true
+                self.ball.y = self.paddle.y - self.ball.height
             end
         end
 
-        if ball.y > VIRTUAL_HEIGHT then
+        --left
+        if self.ball.y < self.paddle.y + self.paddle.height and self.ball.y + self.ball.height > self.paddle.y then --good
+            if self.ball.x + self.ball.width > self.paddle.x and self.ball.x < self.paddle.x then --good
+                paddleHit = true
+                self.ball.x = self.paddle.x - self.ball.width
+            end
+        end
+
+        --right
+        if self.ball.y < self.paddle.y + self.paddle.height and self.ball.y + self.ball.height > self.paddle.y then --good
+            if self.ball.x + self.ball.width > self.paddle.x + self.paddle.width and self.ball.x < self.paddle.x + self.paddle.width then --good
+                paddleHit = true
+                self.ball.x = self.paddle.x + self.paddle.width
+            end
+        end
+
+        if paddleHit then
+            self.ball.dy = -1 * self.ball.dy
+            if self.ball.x < self.paddle.x + (self.paddle.width / 2) and self.paddle.dx < 0 then
+                self.ball.dx = -50 + -(8 * (self.paddle.x + self.paddle.width / 2 - self.ball.x))
+            elseif self.ball.x > self.paddle.x + (self.paddle.width / 2) and self.paddle.dx > 0 then
+                self.ball.dx = 50 + (8 * math.abs(self.paddle.x + self.paddle.width / 2 - self.ball.x))
+            end --
+        end --
+
+        if self.ball.y > VIRTUAL_HEIGHT then
             self.health = self.health - 1
             gEventHandler:alert('hurt')
 
             if self.health == 0 then
-                gStateMachine:change('gameover', {
-                    score = self.score
-                })
+                gStateMachine:change('gameover',{})
             else
                 gStateMachine:change('serve', {
-                    paddle = self.gameObjects.paddle,
+                    paddle = self.paddle,
                     bricks = self.bricks,
                     health = self.health,
-                    score = self.score
+                    score = self.score,
+                    level = self.level,
                 })
             end
         end
-    end
+    end --
+end --
 
-end
+        
 
 function PlayState:render()
-    for name, obj in pairs(self.gameObjects) do
-       obj:render(dt) 
+    self.paddle:render()
+    self.ball:render()
+    for _, brick in pairs(self.bricks) do
+       brick:render() 
     end
 
     renderScore(self.score)
@@ -83,4 +110,13 @@ function PlayState:render()
         love.graphics.setFont(gFonts['large'])
         love.graphics.printf("PAUSED", 0, VIRTUAL_HEIGHT / 2 - 16, VIRTUAL_WIDTH, 'center')
     end
+end
+
+function PlayState:checkVictory()
+    for _, brick in ipairs(self.bricks) do
+        if brick.inPlay then
+            return false
+        end
+    end
+    return true
 end

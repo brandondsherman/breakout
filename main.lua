@@ -69,7 +69,10 @@ function love.load()
     -- set up our sound effects; later, we can just index this table and
     -- call each entry's `play` method
     gSoundEngine = SoundEngine()
-
+    
+    score = 0
+    
+    
     -- the state machine we'll be using to transition between various states
     -- in our game instead of clumping them together in our update and draw
     -- methods
@@ -85,10 +88,12 @@ function love.load()
         ['start'] = function() return StartState() end,
         ['play'] = function() return PlayState() end,
         ['serve'] = function() return ServeState() end,
-        ['gameover'] = function() return GameOverState() end
+        ['gameover'] = function() return GameOverState() end,
+        ['victory'] = function() return VictoryState() end,
     }
     gStateMachine:change('start')
 
+    
     
 
     -- a table we'll use to keep track of which keys have been pressed this
@@ -219,7 +224,7 @@ function renderHealth(health)
 end
 ]]--
 
-function renderScore(score)
+function renderScore()
     love.graphics.setFont(gFonts['small'])
     love.graphics.print('Score:', VIRTUAL_WIDTH - 60, 5)
     love.graphics.printf(tostring(score), VIRTUAL_WIDTH - 50, 5, 40, 'right')

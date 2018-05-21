@@ -14,7 +14,112 @@ function Ball:init(color)
 end
 
 
-function Ball:update(dt)
+function Ball:update(dt, bricks)
+    local collision = false
+    for _, brick in pairs(bricks) do
+        if brick.inPlay then
+            local x2 = self.x
+            local y2 = self.y
+            local left = false
+            local right = false
+            local top = false
+            local bot = false
+            for scale = 1, 4 do
+                left = false
+                right = false
+                top = false
+                bot = false
+                local numHit = 0
+                scale = scale / 4
+                
+                x2 = self.x + self.dx * dt * scale
+                y2 = self.y + self.dx * dt * scale
+                
+                --check left brick wall
+                if y2 < brick.y + brick.height and y2 + self.height > brick.y then --good
+                    if x2 + self.width > brick.x and x2 < brick.x then --good
+                        if self.dx > 0 then
+                            left = true
+                            numHit = numHit + 1
+                        end --
+                    end --
+                end --
+                --check right brick wall
+                if y2 < brick.y + brick.height and y2 + self.height > brick.y then --good
+                    if x2 + self.width > brick.x + brick.width and x2 < brick.x + brick.width then --good
+                        if self.dx < 0 then
+                            right = true
+                            numHit = numHit + 1
+                        end --
+                    end --
+                end --
+                --check top brick wall
+                if x2 + self.width > brick.x and x2 < brick.x + brick.width then --good
+                    if y2 + self.height > brick.y and y2 < brick.y then --good
+                        if self.dy > 0 then
+                            top = true
+                            numHit = numHit + 1
+                        end --
+                    end --
+                end --
+                --check bot brick wall
+                if x2 + self.width > brick.x and x2 < brick.x + brick.width then --good
+                    if y2 + self.height > brick.y + brick.height and y2 < brick.y + brick.height then
+                        if self.dy < 0 then
+                            bot = true 
+                            numHit = numHit + 1
+                        end--
+                    end--
+                end--
+                if numHit == 1 then
+                    collision = true
+                    break
+                elseif numHit > 1 then
+                    print('collisions before: ')
+                    print('left: ' .. tostring(left))
+                    print('right: ' .. tostring(right))
+                    print('top: ' .. tostring(top))
+                    print('bot: ' .. tostring(bot))
+                    print('starting x2: ' .. tostring(x2))
+                    print('starting y2: ' .. tostring(y2))
+                    local answer = self:multipleCollisions(dt, brick, x2, y2, left, right, top, bot)
+                    left = answer.left
+                    right = answer.right
+                    bot = answer.bot
+                    top = answer.top
+                    collision = true
+                    print('collisions after: ')
+                    print('left: ' .. tostring(left))
+                    print('right: ' .. tostring(right))
+                    print('top: ' .. tostring(top))
+                    print('bot: ' .. tostring(bot))
+                    break
+                end --
+            end --for scale
+            if collision then
+                brick:hit()
+                if left then
+                    self.dx = -1 * self.dx
+                    self.x = brick.x - self.width
+                end --
+                if right then
+                    self.dx = -1 * self.dx
+                    self.x = brick.x + brick.width
+                end -- 
+                if top then            
+                    self.dy = self.dy * -1
+                    self.y = brick.y - self.height
+                end --
+                if bot then 
+                    self.dy = self.dy * -1
+                    self.y = brick.y + brick.height
+                end --
+                break
+            end --
+        end --if inplay
+    end -- for bricks
+
+    
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt
 
@@ -36,7 +141,7 @@ function Ball:update(dt)
         gEventHandler:alert('wall-hit')
     end
 
-    
+    return collision
 end
 
 function Ball:render()
@@ -48,52 +153,49 @@ function Ball:render()
 end
 
 
-function Ball:collidesWith(rect)
-    if self.x > rect.x + rect.width or rect.x > self.x + self.width then
-        return false
-    end
-
-    if self.y > rect.y + rect.height or rect.y > self.y + self.height then
-        return false
-    end
+function Ball:multipleCollisions(dt, brick, x2, y2, left, right, top, bot)
     
-    return true
-end
-
-function Ball:hit(obj)
-    
-    if obj.type == 'paddle' then
-        self.dy = -1 * self.dy
-
-        --self.dx = math.sign(obj.dx) * 50 + 
-          --  (8 * math.abs(obj.x + obj.width / 2 - self.x))
-        
-        if self.x < obj.x + (obj.width / 2) and obj.dx < 0 then
-            self.dx = -50 + -(8 * (obj.x + obj.width / 2 - self.x))
-        elseif self.x > obj.x + (obj.width / 2) and obj.dx > 0 then
-            self.dx = 50 + (8 * math.abs(obj.x + obj.width / 2 - self.x))
-        end
-        
+    deltas = {}
+    if left then
+        local deltaX = math.abs(x2 - brick.x)/self.width
+        deltas.x = deltaX
+    end
+    if right then
+        local deltaX = math.abs(x2 + self.width - (brick.x + brick.width))/self.width
+        deltas.x = deltaX
+    end
+    if top then
+        local deltaY = math.abs(y2 - brick.y)/self.height
+        deltas.y = deltaY
+    end
+    if bot then
+        local deltaY = math.abs(y2 + self.height - (brick.y + brick.height))/self.height
+        deltas.y = deltaY
     end
 
-    if obj.type == 'brick' then
-        if obj.inPlay then
-            
-
-            if self.x + 2 < obj.x and self.dx > 0 then
-                self.dx = -1 * self.dx
-                self.x = obj.x - self.width
-            elseif self.x + 6 > obj.x + obj.width and self.dx < 0 then
-                self.dx = -1 * self.dx
-                self.x = obj.x + obj.width
-            elseif self.y < obj.y then
-                self.dy = -1 * self.dy
-                self.y = obj.y - self.height
-            else 
-                self.dy = -1 * self.dy
-                self.y = obj.y + obj.height
-            end
+    if math.abs(deltas.x - deltas.y) > .25 then
+        if deltas.x > deltas.y then
+            return {
+                ['left'] = left,
+                ['right'] = right,
+                ['top'] = false,
+                ['bot'] = false,
+            }
+        else
+            return {
+                ['left'] = false,
+                ['right'] = false,
+                ['top'] = top,
+                ['bot'] = bot,
+            }
         end
+
+    else
+        return {
+            ['left'] = right,
+            ['right'] = right,
+            ['top'] = top,
+            ['bot'] = bot,
+        }
     end
-    --self.dy = self.dy * 1.02
-end
+end --

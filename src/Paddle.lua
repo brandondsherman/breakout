@@ -15,6 +15,7 @@ function Paddle:init(skin)
     self.size = 2
 
     self.paddleSpeed = 200
+    self.inPlay = true
 end
 
 function Paddle:update(dt)
@@ -25,7 +26,7 @@ function Paddle:update(dt)
     else
         self.dx = 0
     end
-
+    self.y = VIRTUAL_HEIGHT - 32
     self.x = math.max(0, math.min(VIRTUAL_WIDTH - self.width, self.x + self.dx * dt))
 end
 

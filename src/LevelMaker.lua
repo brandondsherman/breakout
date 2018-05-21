@@ -19,7 +19,7 @@ function LevelMaker.createLevel(level)
         [2] = {test = function () return math.random(2) == 1 end, func = LevelMaker.alternateFunc, testFailed = LevelMaker.solidFunc}
     }
     highestTier = math.min(3, math.floor(level / 5))
-    highestColor = math.min(5, level % 5 + 3)
+    highestColor = math.min(4, level % 5 + 3)
     
     
     for y = 1, numRows do
@@ -45,12 +45,17 @@ function LevelMaker.createLevel(level)
             if bricks[(y - 1) * numCols + x].inPlay then
                 numOfActiveBricks = numOfActiveBricks + 1    
             end
-            print(tostring(bricks[(y - 1) * numCols + x].inPlay))
+            --print(tostring(bricks[(y - 1) * numCols + x].inPlay))
         end
     end
     if numOfActiveBricks == 0 then
         bricks = LevelMaker.createLevel(level)
     end
+    --if level == 1 then
+      --  
+        --bricks = {[1] = (Brick((1 - 1) * 32 + 8 + (13 - 1) * 16, 1 * 16))}
+        --bricks[1].tier = 0
+    --end
     return bricks
 end
 

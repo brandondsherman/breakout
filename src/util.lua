@@ -122,7 +122,9 @@ function generateQuadsBalls(atlas)
 end
 
 function generateQuadsBricks(atlas)
-    return table.slice(generateQuads(atlas, 32, 16), 1, 16)
+    local quads = table.slice(generateQuads(atlas, 32, 16), 1, 16)
+    
+    return quads
 end
 
 

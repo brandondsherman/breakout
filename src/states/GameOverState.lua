@@ -1,7 +1,7 @@
 GameOverState = Class{__includes = BaseState}
 
 function GameOverState:enter(par)
-    self.score = par.score
+    
 end
 
 function GameOverState:update(dt)
@@ -19,7 +19,7 @@ function GameOverState:render()
     love.graphics.setFont(gFonts['large'])
     love.graphics.printf('GAME OVER', 0, VIRTUAL_HEIGHT / 3, VIRTUAL_WIDTH, 'center')
     love.graphics.setFont(gFonts['medium'])
-    love.graphics.printf('Final Score: ' .. tostring(self.score), 0, VIRTUAL_HEIGHT / 2,
+    love.graphics.printf('Final Score: ' .. tostring(score), 0, VIRTUAL_HEIGHT / 2,
         VIRTUAL_WIDTH, 'center')
     love.graphics.printf('Press Enter!', 0, VIRTUAL_HEIGHT - VIRTUAL_HEIGHT / 4,
         VIRTUAL_WIDTH, 'center')    
