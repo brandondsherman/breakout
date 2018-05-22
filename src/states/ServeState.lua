@@ -4,11 +4,12 @@ function ServeState:enter(par)
     
     self.bricks = par.bricks
     self.health = par.health
-    
+    self.highScores = par.highScores
     self.paddle = par.paddle
+    self.level = par.level
     self.ball = Ball()
     self.ball.color = math.random(7)    
-    self.level = par.level
+    
 end
 
 function ServeState:update(dt)
@@ -23,6 +24,7 @@ function ServeState:update(dt)
             health = self.health,
             ball = self.ball,
             level = self.level,
+            highScores = self.highScores
         })
     end
 

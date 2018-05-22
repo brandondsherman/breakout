@@ -28,6 +28,10 @@ function StartState:init()
     self.menuOptionsSize = table.size(self.menuOptions)
 end
 
+function StartState:enter(par)
+    self.highScores = par.highScores
+end
+
 function StartState:update(dt)
     -- toggle self.highlighted option if we press an arrow key up or down
     if love.keyboard.wasPressed('up') then
@@ -41,12 +45,16 @@ function StartState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         --gEventHandler:alert('confirm')
         
-        if self.menuOptions[self.highlighted] == "START" then
+        if self.menuOptions[self.highlighted] == 'START' then
             gStateMachine:change('serve', {
                 paddle = Paddle(1),
                 bricks = LevelMaker.createLevel(1),
                 health = 3,
                 level = 1,
+            })
+        elseif self.menuOptions[self.highlighted] == 'HIGH SCORES' then
+            gStateMachine:change('highScores', {
+                highScores = self.highScores
             })
         end
     end

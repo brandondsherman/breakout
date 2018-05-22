@@ -75,24 +75,29 @@ function Ball:update(dt, bricks)
                     collision = true
                     break
                 elseif numHit > 1 then
+                    --[[
                     print('collisions before: ')
                     print('left: ' .. tostring(left))
                     print('right: ' .. tostring(right))
                     print('top: ' .. tostring(top))
                     print('bot: ' .. tostring(bot))
-                    print('starting x2: ' .. tostring(x2))
-                    print('starting y2: ' .. tostring(y2))
+                    print('ball left: ' .. tostring(x2))
+                    print('ball right: ' .. tostring(y2))
+                    --]]
+
                     local answer = self:multipleCollisions(dt, brick, x2, y2, left, right, top, bot)
                     left = answer.left
                     right = answer.right
                     bot = answer.bot
                     top = answer.top
                     collision = true
+                    --[[
                     print('collisions after: ')
                     print('left: ' .. tostring(left))
                     print('right: ' .. tostring(right))
                     print('top: ' .. tostring(top))
                     print('bot: ' .. tostring(bot))
+                    --]]
                     break
                 end --
             end --for scale

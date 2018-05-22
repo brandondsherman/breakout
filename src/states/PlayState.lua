@@ -5,7 +5,7 @@ function PlayState:enter(par)
     self.paddle = par.paddle
     self.ball = par.ball
     self.bricks = par.bricks
-
+    self.highScores = par.highScores
     
     self.health = par.health
     self.bricks = par.bricks
@@ -36,6 +36,7 @@ function PlayState:update(dt)
                     level = self.level,
                     paddle = self.paddle,
                     health = self.health,
+                    highScores = self.highScores,
                     ball = self.ball
                 })
             end --
@@ -74,6 +75,13 @@ function PlayState:update(dt)
                 self.ball.dx = 50 + (8 * math.abs(self.paddle.x + self.paddle.width / 2 - self.ball.x))
             end --
         end --
+        for k, brick in pairs(self.bricks) do
+            brick:update(dt)
+        end
+
+        if math.abs(self.ball.dy) < 140 + 10 * self.level then
+            self.ball.dy = self.ball.dy * 1.02
+        end
 
         if self.ball.y > VIRTUAL_HEIGHT then
             self.health = self.health - 1
@@ -87,6 +95,7 @@ function PlayState:update(dt)
                     bricks = self.bricks,
                     health = self.health,
                     score = self.score,
+                    highScores = self.highScores,
                     level = self.level,
                 })
             end
@@ -97,11 +106,17 @@ end --
         
 
 function PlayState:render()
-    self.paddle:render()
-    self.ball:render()
+    
     for _, brick in pairs(self.bricks) do
        brick:render() 
     end
+
+    for k, brick in pairs(self.bricks) do
+        brick:renderParticles()
+    end
+
+    self.paddle:render()
+    self.ball:render()
 
     renderScore(self.score)
     renderHealth(self.health)
@@ -110,6 +125,7 @@ function PlayState:render()
         love.graphics.setFont(gFonts['large'])
         love.graphics.printf("PAUSED", 0, VIRTUAL_HEIGHT / 2 - 16, VIRTUAL_WIDTH, 'center')
     end
+
 end
 
 function PlayState:checkVictory()
