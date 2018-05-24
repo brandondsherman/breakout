@@ -49,8 +49,9 @@ function StartState:update(dt)
             gStateMachine:change('serve', {
                 paddle = Paddle(1),
                 bricks = LevelMaker.createLevel(1),
-                health = 3,
+                health = 1,
                 level = 1,
+                highScores = self.highScores
             })
         elseif self.menuOptions[self.highlighted] == 'HIGH SCORES' then
             gStateMachine:change('highScores', {

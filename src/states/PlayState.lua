@@ -88,13 +88,15 @@ function PlayState:update(dt)
             gEventHandler:alert('hurt')
 
             if self.health == 0 then
-                gStateMachine:change('gameover',{})
+                print(self.highScores)
+                gStateMachine:change('gameover',{
+                    highScores = self.highScores,
+                    })
             else
                 gStateMachine:change('serve', {
                     paddle = self.paddle,
                     bricks = self.bricks,
                     health = self.health,
-                    score = self.score,
                     highScores = self.highScores,
                     level = self.level,
                 })

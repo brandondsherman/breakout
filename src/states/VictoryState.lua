@@ -6,7 +6,7 @@ function VictoryState:enter(par)
     self.level = par.level + 1
     self.paddle = par.paddle
     self.ball = par.paddle
-    self.highScores = params.highScores
+    self.highScores = par.highScores
 end
 
 

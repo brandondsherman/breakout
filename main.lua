@@ -93,6 +93,7 @@ function love.load()
         ['highScores'] = function() return HighScoreState() end,
         ['enterHighScore'] = function() return EnterHighScoreState() end
     }
+    
     gStateMachine:change('start', {
         highScores = loadHighScores()
     })
@@ -277,6 +278,7 @@ function loadHighScores()
         -- flip the name flag
         name = not name
     end
+    
 
     return scores
 end

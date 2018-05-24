@@ -1,19 +1,26 @@
 GameOverState = Class{__includes = BaseState}
 
 function GameOverState:enter(par)
-    self.score = par.score
+    self.score = score
     self.highScores = par.highScores
+    for name, val in pairs(par) do
+        print(name)
+    end
+    
+
 end
 
 function GameOverState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gStateMachine:change('start')
+        gStateMachine:change('start',{
+            highScores = self.highScores
+            })
         local highScore = false
         
         -- keep track of what high score ours overwrites, if any
         local scoreIndex = 11
 
-        for i = 10, 1, -1 do
+        for i = #self.highScores, 1, -1 do
             local score = self.highScores[i].score or 0
             if self.score > score then
                 highScoreIndex = i
